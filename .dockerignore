@@ -1,0 +1,12 @@
+node_modules
+.svelte-kit
+build
+.env
+.env.*
+test-results
+playwright-report
+.playwright-mcp
+.omo
+.codegraph
+/folio-initial.png
+docs/qa
