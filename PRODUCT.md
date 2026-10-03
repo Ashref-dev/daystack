@@ -11,7 +11,7 @@ A reusable weekly operating list. Recurring rules generate fresh dated occurrenc
 ## Operating Context
 Mobile-first standalone PWA, offline guest use, optional account synchronization. Floating local dates and times.
 ## Capabilities and Constraints
-Seven-day accordion, quick add, recurrence, occurrence overrides, future series splitting, bulk routines, week history, export/import, themes. No advertising, task-text analytics, or exposed secret credentials.
+Seven-day accordion, one add button, recurrence, occurrence overrides, future series splitting, week history. System theme only; no settings surface. No advertising, task-text analytics, or exposed secret credentials.
 ## Brand Commitments
 Working title replaced with Folio: a sheet for every day. Editorial typography, tactile neutral sheets, warm orange check marks. Structural inspiration only; no copied Weekstack assets.
 ## Product Principles
