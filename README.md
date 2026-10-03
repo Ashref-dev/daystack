@@ -1,6 +1,6 @@
 # Folio
 
-Your week, one day at a time. A mobile-first, local-first weekly checklist built with Svelte 5.57.1, SvelteKit 3 and Bun. The working name Daystack became **Folio**.
+Build your ideal repeating routine once — skincare every day, gym five days a week, medication on Sundays — then open the app, land on today and check things off. Repeats come back fresh the next day. Mobile-first and local-first, built with Svelte 5, SvelteKit 3 and Bun. Repository: **daystack**; app name: **Folio**.
 
 ## Run
 
@@ -20,27 +20,25 @@ Open `http://localhost:5173`. Localhost supports service workers. Testing from a
 
 ## What works without configuration
 
-- Today-first seven-day stack, indefinite past/future weeks, date picker, swipe navigation.
-- Quick-add, timed tasks, one-offs, daily/weekdays/weekends/custom weekly routines, optional end dates.
-- Dated completion, per-instance edits/deletion, future series splitting, moving, pointer/touch dragging, manual ordering for equal times.
-- Bulk planner with paste, weekday toggles, duplicates, ordering and future-safe edits.
-- IndexedDB persistence plus a synchronous crash/reload recovery journal. Offline shell and fonts are cached after the first successful online load.
-- Light/dark/system, Monday/Sunday week start, completion visibility, import/export and confirmed data deletion.
-- Manifest, original icons, standalone install, iPhone installation guidance.
-- Foreground reminders with explicit notification permission. No first-launch permission prompt.
+- Today-first seven-day stack that opens on today; past/future weeks via arrows or swipe.
+- One floating add button. New tasks default to **every day**; pick any days, Weekdays, Weekends or Once. iOS-style wheel pickers for time and dates; optional end date and note.
+- Completion is per date: repeating tasks are never checked off permanently.
+- Edit or delete just this day or this and upcoming days (history preserved); change the date to move one occurrence; long-press (touch) or drag (mouse) to move between days or reorder.
+- IndexedDB persistence plus a crash/reload recovery journal. Offline shell and fonts are cached after the first online load.
+- System light/dark theme, manifest, original icons, standalone install.
 
-The initial week is empty. “Try an example week” is optional and clearly user-selected. Example routines begin today, never fabricate past history.
+Sync, backup import/export and reminder modules remain in `src/lib` but currently have no UI.
 
 ## Cloud sync (optional, real)
 
 1. Create a Supabase project and apply `supabase/schema.sql` in its SQL editor.
 2. Configure email magic-link auth. Add your production origin and localhost testing origin to the redirect allowlist.
 3. Copy `.env.example` to `.env` and set **only** the project URL and publishable/anon key in `PUBLIC_SUPABASE_*`.
-4. Restart the server. Settings exposes email sign-in, sync status and sign-out.
+4. Restart the server. (The sign-in UI was removed in the distill pass; sync code remains for a future surface.)
 
 Cloud synchronization merges dated records by edit timestamp, uses optimistic revision checks to prevent simultaneous backup overwrites, retries after connectivity returns and retains local content on errors. A persistent IndexedDB revision records unsynchronized edits. Guest registration merges rather than replaces local tasks. Appearance preferences are device-local.
 
-Series successors retain lineage so concurrent future edits reconcile to one routine rather than duplicate it. Destructive edit/delete conflicts preserve content and expose a review action in Settings. Durable reset generations stop interrupted deletion, stale tabs, in-flight sync or older device snapshots from resurrecting deleted tasks. Account ownership blocks automatic cross-account uploads; explicitly opening another account archives the previous local week and keeps datasets separate.
+Series successors retain lineage so concurrent future edits reconcile to one routine rather than duplicate it. Destructive edit/delete conflicts preserve content for later review. Durable reset generations stop interrupted deletion, stale tabs, in-flight sync or older device snapshots from resurrecting deleted tasks. Account ownership blocks automatic cross-account uploads; explicitly opening another account archives the previous local week and keeps datasets separate.
 
 Task data is private under authenticated row-level security. No telemetry, ads or third-party fonts. Service-role and VAPID private keys must never use a public environment prefix.
 
