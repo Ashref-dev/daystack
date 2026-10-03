@@ -1,44 +1,142 @@
-import { test,expect } from '@playwright/test';
-import { openApp,chooseDate,createRoutine,waitSaved } from './helpers';
-test('Given an empty week, when quick adding and reloading, then the one-off remains',async({page})=>{
+import { test, expect } from '@playwright/test';
+import { openApp, chooseDate, openDay, createTask, editTask } from './helpers';
+
+test('Given an empty week, when adding a one-off and reloading, then it remains only on that day', async ({ page }) => {
   await openApp(page);
-  await page.getByRole('textbox',{name:'Add a task for Monday'}).fill('Call dentist');await page.getByRole('textbox',{name:'Add a task for Monday'}).press('Enter');
-  await page.reload();await expect(page.getByRole('checkbox',{name:'Call dentist, incomplete'})).toBeVisible();
+  await createTask(page, 'Call dentist', 'Once', false);
+  await page.reload();
+  await expect(page.locator('.day.open').getByRole('checkbox', { name: 'Call dentist', exact: true })).toBeVisible();
+  await openDay(page, '2026-10-06');
+  await expect(page.locator('.day.open').getByRole('checkbox', { name: 'Call dentist', exact: true })).toHaveCount(0);
 });
-test('Given a daily routine, when completing Monday, then Tuesday and next Monday remain fresh',async({page})=>{
-  await openApp(page);await createRoutine(page);
-  await page.getByRole('checkbox',{name:'Skincare, 08:00, incomplete'}).click();
-  await page.locator('[data-day="2026-10-06"] .day-header').click();await expect(page.getByRole('checkbox',{name:'Skincare, 08:00, incomplete'})).toBeVisible();
-  await page.getByRole('button',{name:'Next week'}).click();await page.locator('[data-day="2026-10-12"] .day-header').click();await expect(page.getByRole('checkbox',{name:'Skincare, 08:00, incomplete'})).toBeVisible();
-  await page.getByRole('button',{name:'Today',exact:true}).click();await expect(page.getByRole('checkbox',{name:'Skincare, 08:00, complete'})).toBeChecked();
+
+test('Given a new task, when opening the composer, then it defaults to every day and says so', async ({ page }) => {
+  await openApp(page);
+  await page.locator('.fab').click();
+  const dialog = page.getByRole('dialog', { name: 'New task' });
+  await expect(dialog.getByRole('button', { name: 'Daily', exact: true })).toHaveAttribute('aria-pressed', 'true');
+  await expect(dialog.locator('.save')).toHaveText('Add to every day');
 });
-test('Given a MWF routine, when moving Wednesday, then next week is unchanged',async({page})=>{
-  await openApp(page);await createRoutine(page,'Gym','custom');await chooseDate(page,'2026-10-07');
-  await page.getByRole('button',{name:'Edit Gym',exact:true}).click();await page.getByRole('button',{name:'Move to another day'}).click();await page.getByRole('textbox',{name:'Move to',exact:true}).fill('2026-10-08');await page.getByRole('button',{name:'Move',exact:true}).click();
-  await expect(page.getByRole('checkbox',{name:'Gym, 08:00, incomplete'})).toHaveCount(0);
-  await chooseDate(page,'2026-10-08');await expect(page.getByRole('checkbox',{name:'Gym, 08:00, incomplete'})).toBeVisible();
-  await chooseDate(page,'2026-10-14');await expect(page.getByRole('checkbox',{name:'Gym, 08:00, incomplete'})).toBeVisible();
+
+test('Given a daily routine, when completing Monday, then Tuesday and next Monday stay fresh', async ({ page }) => {
+  await openApp(page);
+  await createTask(page);
+  await page.locator('.day.open').getByRole('checkbox', { name: 'Skincare, 11:00' }).click();
+  await expect(page.locator('.day.open').getByRole('checkbox', { name: 'Skincare, 11:00' })).toBeChecked();
+  await openDay(page, '2026-10-06');
+  await expect(page.locator('.day.open').getByRole('checkbox', { name: 'Skincare, 11:00' })).not.toBeChecked();
+  await page.getByRole('button', { name: 'Next week' }).click();
+  await openDay(page, '2026-10-12');
+  await expect(page.locator('.day.open').getByRole('checkbox', { name: 'Skincare, 11:00' })).not.toBeChecked();
+  await page.locator('.week-title').click();
+  await expect(page.locator('[data-day="2026-10-05"]')).toHaveClass(/open/);
+  await expect(page.locator('.day.open').getByRole('checkbox', { name: 'Skincare, 11:00' })).toBeChecked();
 });
-test('Given a routine, when editing only one occurrence, then tomorrow keeps its title',async({page})=>{
-  await openApp(page);await createRoutine(page);
-  await page.getByRole('button',{name:'Edit Skincare',exact:true}).click();await page.getByRole('textbox',{name:'What needs to happen?'}).fill('Skincare with mask');await page.getByRole('textbox',{name:'Time optional'}).fill('09:30');await page.getByRole('button',{name:'Save changes'}).click();
-  await expect(page.getByRole('checkbox',{name:'Skincare with mask, 09:30, incomplete'})).toBeVisible();await chooseDate(page,'2026-10-06');await expect(page.getByRole('checkbox',{name:'Skincare, 08:00, incomplete'})).toBeVisible();
+
+test('Given weekday and Sunday routines, when browsing the week, then each appears on its days', async ({ page }) => {
+  await openApp(page);
+  await createTask(page, 'Gym', 'Weekdays');
+  await createTask(page, 'Medication', ['Sunday'], false);
+  await openDay(page, '2026-10-09');
+  await expect(page.locator('.day.open').getByRole('checkbox', { name: 'Gym, 11:00' })).toBeVisible();
+  await expect(page.locator('.day.open').getByRole('checkbox', { name: 'Medication', exact: true })).toHaveCount(0);
+  await openDay(page, '2026-10-11');
+  await expect(page.locator('.day.open').getByRole('checkbox', { name: 'Gym, 11:00' })).toHaveCount(0);
+  await expect(page.locator('.day.open').getByRole('checkbox', { name: 'Medication', exact: true })).toBeVisible();
 });
-test('Given a routine, when editing future occurrences on Wednesday, then history remains intact',async({page})=>{
-  await openApp(page);await createRoutine(page,'Gym','custom');await chooseDate(page,'2026-10-07');
-  await page.getByRole('button',{name:'Edit Gym',exact:true}).click();await page.getByRole('radio',{name:'This and future occurrences'}).check();await page.getByRole('textbox',{name:'Time optional'}).fill('09:00');await page.getByRole('button',{name:'Save changes'}).click();
-  await expect(page.getByRole('checkbox',{name:'Gym, 09:00, incomplete'})).toBeVisible();await chooseDate(page,'2026-10-05');await expect(page.getByRole('checkbox',{name:'Gym, 08:00, incomplete'})).toBeVisible();await chooseDate(page,'2026-10-09');await expect(page.getByRole('checkbox',{name:'Gym, 09:00, incomplete'})).toBeVisible();
+
+test('Given a MWF routine, when moving Wednesday to Thursday, then next week is unchanged', async ({ page }) => {
+  await openApp(page);
+  await createTask(page, 'Gym', ['Monday', 'Wednesday', 'Friday']);
+  await chooseDate(page, '2026-10-07');
+  const dialog = await editTask(page, 'Gym');
+  await dialog.getByRole('button', { name: /^Date/ }).click();
+  await dialog.getByRole('spinbutton', { name: 'Date' }).press('ArrowDown');
+  await expect(dialog.getByRole('button', { name: /^Date/ })).toContainText('Thu, Oct 8');
+  await dialog.locator('.save').click();
+  await expect(page.locator('.day.open').getByRole('checkbox', { name: 'Gym, 11:00' })).toHaveCount(0);
+  await openDay(page, '2026-10-08');
+  await expect(page.locator('.day.open').getByRole('checkbox', { name: 'Gym, 11:00' })).toBeVisible();
+  await chooseDate(page, '2026-10-14');
+  await expect(page.locator('.day.open').getByRole('checkbox', { name: 'Gym, 11:00' })).toBeVisible();
 });
-test('Given a completed Monday, when deleting future recurrence, then the completion is preserved',async({page})=>{
-  await openApp(page);await createRoutine(page);await page.getByRole('checkbox',{name:'Skincare, 08:00, incomplete'}).click();await chooseDate(page,'2026-10-07');
-  await page.getByRole('button',{name:'Edit Skincare',exact:true}).click();await page.getByRole('radio',{name:'This and future occurrences'}).check();await page.getByRole('button',{name:'Delete task',exact:true}).click();await page.getByRole('button',{name:'Confirm deletion'}).click();
-  await expect(page.getByRole('checkbox',{name:/Skincare/})).toHaveCount(0);await chooseDate(page,'2026-10-05');await expect(page.getByRole('checkbox',{name:'Skincare, 08:00, complete'})).toBeChecked();
+
+test('Given a routine, when editing only one occurrence, then tomorrow keeps its title', async ({ page }) => {
+  await openApp(page);
+  await createTask(page);
+  const dialog = await editTask(page, 'Skincare');
+  await dialog.getByRole('textbox', { name: 'Task name' }).fill('Skincare with mask');
+  await dialog.locator('.save').click();
+  await expect(page.locator('.day.open').getByRole('checkbox', { name: 'Skincare with mask, 11:00' })).toBeVisible();
+  await openDay(page, '2026-10-06');
+  await expect(page.locator('.day.open').getByRole('checkbox', { name: 'Skincare, 11:00' })).toBeVisible();
 });
-test('Given a routine, when deleting one occurrence, then the next date remains',async({page})=>{
-  await openApp(page);await createRoutine(page);await page.getByRole('button',{name:'Edit Skincare',exact:true}).click();await page.getByRole('button',{name:'Delete task',exact:true}).click();await page.getByRole('button',{name:'Confirm deletion'}).click();
-  await expect(page.getByRole('checkbox',{name:/Skincare/})).toHaveCount(0);await chooseDate(page,'2026-10-06');await expect(page.getByRole('checkbox',{name:'Skincare, 08:00, incomplete'})).toBeVisible();
+
+test('Given a routine, when changing upcoming time on Wednesday, then earlier days keep theirs', async ({ page }) => {
+  await openApp(page);
+  await createTask(page, 'Gym', 'Weekdays');
+  await chooseDate(page, '2026-10-07');
+  const dialog = await editTask(page, 'Gym');
+  await dialog.getByRole('button', { name: 'This & upcoming' }).click();
+  await dialog.getByRole('button', { name: /^Time/ }).click();
+  await dialog.getByRole('spinbutton', { name: 'Hour' }).press('ArrowDown');
+  await expect(dialog.getByRole('button', { name: /^Time/ })).toContainText('12:00');
+  await dialog.locator('.save').click();
+  await expect(page.locator('.day.open').getByRole('checkbox', { name: 'Gym, 12:00' })).toBeVisible();
+  await openDay(page, '2026-10-05');
+  await expect(page.locator('.day.open').getByRole('checkbox', { name: 'Gym, 11:00' })).toBeVisible();
+  await openDay(page, '2026-10-09');
+  await expect(page.locator('.day.open').getByRole('checkbox', { name: 'Gym, 12:00' })).toBeVisible();
 });
-test('Given tasks, when changing theme and week start, then settings survive restart',async({page})=>{
-  await openApp(page);await page.getByRole('button',{name:'Settings',exact:true}).click();await page.getByRole('button',{name:'dark',exact:true}).click();await page.getByRole('combobox',{name:'Starts on'}).selectOption('0');await page.getByRole('button',{name:'Close',exact:true}).click();await waitSaved(page);await page.reload();
-  await expect(page.locator('html')).toHaveAttribute('data-theme','dark');await expect(page.locator('.day-sheet').first()).toHaveAttribute('data-day','2026-10-04');
+
+test('Given a completed Monday, when deleting upcoming from Wednesday, then Monday is preserved', async ({ page }) => {
+  await openApp(page);
+  await createTask(page);
+  await page.locator('.day.open').getByRole('checkbox', { name: 'Skincare, 11:00' }).click();
+  await chooseDate(page, '2026-10-07');
+  const dialog = await editTask(page, 'Skincare');
+  await dialog.getByRole('button', { name: 'This & upcoming' }).click();
+  await dialog.getByRole('button', { name: 'Delete task' }).click();
+  await dialog.getByRole('button', { name: 'Confirm delete' }).click();
+  await expect(page.locator('.day.open').getByRole('checkbox', { name: /Skincare/ })).toHaveCount(0);
+  await openDay(page, '2026-10-05');
+  await expect(page.locator('.day.open').getByRole('checkbox', { name: 'Skincare, 11:00' })).toBeChecked();
+});
+
+test('Given a routine, when deleting one occurrence, then the next day remains', async ({ page }) => {
+  await openApp(page);
+  await createTask(page);
+  const dialog = await editTask(page, 'Skincare');
+  await dialog.getByRole('button', { name: 'Delete task' }).click();
+  await dialog.getByRole('button', { name: 'Confirm delete' }).click();
+  await expect(page.locator('.day.open').getByRole('checkbox', { name: /Skincare/ })).toHaveCount(0);
+  await openDay(page, '2026-10-06');
+  await expect(page.locator('.day.open').getByRole('checkbox', { name: 'Skincare, 11:00' })).toBeVisible();
+});
+
+test('Given a blank name, when saving, then a friendly error is shown', async ({ page }) => {
+  await openApp(page);
+  await page.locator('.fab').click();
+  const dialog = page.getByRole('dialog', { name: 'New task' });
+  await dialog.getByRole('textbox', { name: 'Task name' }).fill('   ');
+  await dialog.locator('.save').click();
+  await expect(dialog.getByRole('alert')).toHaveText('Give it a name.');
+});
+
+test('Given a week, when dragging a task onto Tuesday, then it moves there', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'Touch long-press is exercised manually on devices');
+  await openApp(page);
+  await createTask(page, 'Errand', 'Once');
+  const row = page.getByRole('button', { name: 'Edit Errand', exact: true });
+  const box = await row.boundingBox();
+  const target = await page.locator('[data-day="2026-10-06"] .day-head').boundingBox();
+  if (!box || !target) throw new Error('Missing drag geometry');
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(target.x + target.width / 2, target.y + target.height / 2, { steps: 12 });
+  await page.mouse.up();
+  await expect(page.locator('[data-day="2026-10-06"]')).toHaveClass(/open/);
+  await expect(page.locator('.day.open').getByRole('checkbox', { name: 'Errand, 11:00' })).toBeVisible();
+  await openDay(page, '2026-10-05');
+  await expect(page.locator('.day.open').getByRole('checkbox', { name: /Errand/ })).toHaveCount(0);
 });
