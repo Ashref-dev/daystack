@@ -10,7 +10,9 @@ dialog.sheet {
 }
 dialog.sheet:not([open]) { display: none; }
 dialog.sheet::backdrop { background: rgba(28, 28, 20, .34); animation: fade-in .35s ease both; }
-@media (prefers-color-scheme: dark) { dialog.sheet::backdrop { background: rgba(0, 0, 0, .55); } }
+:root[data-theme='dark'] dialog.sheet::backdrop { background: rgba(0, 0, 0, .55); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme='light']) dialog.sheet::backdrop { background: rgba(0, 0, 0, .55); } }
+
 dialog.sheet.closing { animation: sheet-down .28s cubic-bezier(.4, 0, 1, 1) forwards; }
 dialog.sheet.closing::backdrop { animation: fade-out .28s ease forwards; }
 @keyframes sheet-up { from { transform: translateY(100%); } }

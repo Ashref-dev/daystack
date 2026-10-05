@@ -12,16 +12,27 @@
   --font-ui: 'Instrument Sans Variable', ui-sans-serif, system-ui, sans-serif;
   --font-display: 'Instrument Serif', ui-serif, Georgia, serif;
   font-family: var(--font-ui); font-synthesis: none; -webkit-font-smoothing: antialiased;
-  color: var(--ink); background: var(--canvas); color-scheme: light dark;
+  color: var(--ink); background: var(--canvas);
 }
-@media (prefers-color-scheme: dark) {
-  :root {
+:root { color-scheme: light; }
+:root[data-theme='dark'] {
     --canvas: #171816; --paper: #272924; --sheet: #20221e; --edge: #121311;
     --ink: #f3f3ed; --muted: #b2b5aa; --faint: #80847a;
     --accent: #ff7950; --accent-text: #ff9979; --accent-soft: #40291f;
     --line: #363932; --field: #30332d; --primary: #ff7950; --primary-text: #1d1f1b;
     --check-line: #82877a; --check-ink: #21231f; --backdrop: rgba(0, 0, 0, .55);
     --lift: 0 1px 0 #10110f, 0 24px 48px -28px rgba(0, 0, 0, .75);
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+      --canvas: #171816; --paper: #272924; --sheet: #20221e; --edge: #121311;
+      --ink: #f3f3ed; --muted: #b2b5aa; --faint: #80847a;
+      --accent: #ff7950; --accent-text: #ff9979; --accent-soft: #40291f;
+      --line: #363932; --field: #30332d; --primary: #ff7950; --primary-text: #1d1f1b;
+      --check-line: #82877a; --check-ink: #21231f; --backdrop: rgba(0, 0, 0, .55);
+      --lift: 0 1px 0 #10110f, 0 24px 48px -28px rgba(0, 0, 0, .75);
+    color-scheme: dark;
   }
 }
 
