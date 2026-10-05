@@ -40,7 +40,7 @@ export async function createTask(page: Page, title = 'Skincare', repeat: Repeat 
 }
 
 export async function editTask(page: Page, title: string) {
-  await page.getByRole('button', { name: `Edit ${title}`, exact: true }).click();
+  await page.locator('.day.open').getByRole('button', { name: `Edit ${title}`, exact: true }).click();
   return page.getByRole('dialog', { name: 'Edit task' });
 }
 

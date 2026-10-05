@@ -11,7 +11,7 @@
   import { app, initialize, commit, announce } from '#lib/state.svelte.ts';
   import { getOccurrences, moveOccurrence, reorderOccurrence, toggleComplete } from '#lib/domain.ts';
   import { addDays, formatDate, localDate, weekDates, weekLabel, weekOf } from '#lib/dates.ts';
-  import { dateSchema, type Occurrence } from '#lib/model.ts';
+  import { dateSchema, type Occurrence, type Settings } from '#lib/model.ts';
   import { checkReminders } from '#lib/reminders.ts';
   import { cloudClient } from '#lib/cloud.ts';
   import { syncNow } from '#lib/sync.svelte.ts';
@@ -67,6 +67,31 @@
     expanded = today;
     void revealToday();
   }
+  const themes = [
+    { value: 'system', label: 'Auto', icon: 'auto' },
+    { value: 'light', label: 'Light', icon: 'sun' },
+    { value: 'dark', label: 'Dark', icon: 'moon' }
+  ] as const;
+  const theme = $derived(app.data.settings.theme);
+  function setTheme(value: Settings['theme']): void {
+    const settings = app.data.settings;
+    if (settings.theme === value) return;
+    const apply = async () => {
+      commit({ ...app.data, settings: { ...settings, theme: value, updatedAt: Math.max(Date.now(), settings.updatedAt + 1) } });
+      await tick();
+    };
+    if (document.startViewTransition && motion(1)) document.startViewTransition(apply);
+    else void apply();
+  }
+  $effect(() => {
+    if (!app.ready) return;
+    const root = document.documentElement;
+    if (theme === 'system') { delete root.dataset['theme']; localStorage.removeItem('folio-appearance'); }
+    else { root.dataset['theme'] = theme; localStorage.setItem('folio-appearance', theme); }
+    const metas = document.querySelectorAll<HTMLMetaElement>('meta[name="theme-color"]');
+    metas.forEach((meta, index) => { meta.content = theme === 'dark' ? '#171816' : theme === 'light' ? '#eae9e4' : index === 0 ? '#eae9e4' : '#171816'; });
+  });
+
   function openComposer(date: string, occurrence: Occurrence | null = null): void { composer = { date, occurrence }; }
   function focusOpener(event: Event): void {
     const button = event.target instanceof Element ? event.target.closest('button[data-sheet-opener]') : null;
@@ -244,6 +269,14 @@
       {/each}
     </div>
   {/key}
+
+  {#if app.ready}
+    <div class="theme-toggle" role="group" aria-label="Appearance" style:--slot={themes.findIndex(item => item.value === theme)}>
+      {#each themes as item (item.value)}
+        <button aria-pressed={theme === item.value} aria-label={item.label} title={item.label} onclick={() => setTheme(item.value)}><Icon name={item.icon} size={16} /></button>
+      {/each}
+    </div>
+  {/if}
 </main>
 
 <button class="fab" data-sheet-opener aria-label={`Add a task to ${formatDate(expanded, { weekday: 'long' })}`} disabled={!app.ready} onclick={() => openComposer(expanded)}>

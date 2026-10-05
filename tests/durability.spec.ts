@@ -32,3 +32,17 @@ test('Given a saved routine, when the app restarts, then it lands on today with 
   await expect(page.locator('[data-day="2026-10-08"]')).toHaveClass(/open/);
   await expect(page.locator('.day.open').getByRole('checkbox', { name: 'Medication, 08:00' })).toBeVisible();
 });
+
+test('Given the appearance toggle, when choosing dark and restarting, then dark persists without system preference', async ({ page }) => {
+  await page.emulateMedia({ colorScheme: 'light' });
+  await openApp(page);
+  await page.getByRole('group', { name: 'Appearance' }).getByRole('button', { name: 'Dark' }).click();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+  await waitSaved(page);
+  await page.reload();
+  await ready(page);
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+  await expect(page.getByRole('button', { name: 'Dark' })).toHaveAttribute('aria-pressed', 'true');
+  await page.getByRole('button', { name: 'Auto' }).click();
+  await expect(page.locator('html')).not.toHaveAttribute('data-theme', /.+/);
+});
