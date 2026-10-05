@@ -13,3 +13,4 @@ folio-initial.png
 docs/qa/screenshots/
 docs/qa/lighthouse-*.json
 docs/qa/precommit-qa/
+.vercel
