@@ -3,6 +3,7 @@
   import { fly, slide } from 'svelte/transition';
   import { flip } from 'svelte/animate';
   import { quintOut } from 'svelte/easing';
+  import { page } from '$app/state';
   import type { PageProps } from './$types';
   import type { Subscription } from '@supabase/supabase-js';
   import Icon from '#lib/components/Icon.svelte';
@@ -18,6 +19,8 @@
   import { motion } from '#lib/motion.ts';
 
   let { data }: PageProps = $props();
+  const origin = $derived(page.url.origin);
+  const description = 'Build your routine once. Check it off today, it comes back fresh tomorrow.';
   const initialToday = untrack(() => data.initialDate);
   let today = $state(initialToday);
   let week = $state(weekOf(initialToday, 1));
@@ -199,7 +202,25 @@
   });
 </script>
 
-<svelte:head><title>Folio</title><meta name="description" content="A simple weekly checklist with fresh recurring routines." /></svelte:head>
+<svelte:head>
+  <title>Daystack · Repeating routines, fresh every day</title>
+  <meta name="description" content={description} />
+  <link rel="canonical" href={`${origin}/`} />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Daystack" />
+  <meta property="og:title" content="Daystack · Done today. Fresh tomorrow." />
+  <meta property="og:description" content={description} />
+  <meta property="og:url" content={`${origin}/`} />
+  <meta property="og:image" content={`${origin}/og.png`} />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="An orange check mark tile beside the words Done today. Fresh tomorrow." />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Daystack · Done today. Fresh tomorrow." />
+  <meta name="twitter:description" content={description} />
+  <meta name="twitter:image" content={`${origin}/og.png`} />
+</svelte:head>
 
 <main class="app">
   <nav class="week-bar" aria-label="Week">

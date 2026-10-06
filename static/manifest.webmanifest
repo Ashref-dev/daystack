@@ -1,8 +1,8 @@
 {
 	"id": "/",
-	"name": "Folio",
-	"short_name": "Folio",
-	"description": "A sheet for every day. Your weekly operating list, local first.",
+	"name": "Daystack",
+	"short_name": "Daystack",
+	"description": "Build your routine once. Check it off today, it comes back fresh tomorrow.",
 	"start_url": "/",
 	"scope": "/",
 	"display": "standalone",

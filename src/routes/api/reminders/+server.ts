@@ -58,7 +58,7 @@ export const POST: RequestHandler = async ({ request }) => {
         let expired = false;
         try {
           await sendNotification({ endpoint: subscription.endpoint, keys: subscription.keys }, JSON.stringify({
-            title: 'Folio reminder', body: reminder.occurrence.title,
+            title: 'Daystack reminder', body: reminder.occurrence.title,
             tag: reminder.key, url: `/?date=${reminder.occurrence.date}`
           }), {
             vapidDetails: { subject: config.VAPID_SUBJECT, publicKey: config.PUBLIC_VAPID_KEY, privateKey: config.VAPID_PRIVATE_KEY },

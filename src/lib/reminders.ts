@@ -10,7 +10,7 @@ export async function enablePush():Promise<void> {
   const token=session?.data.session?.access_token;
   if(!token)throw new ReminderError('Sign in to enable background reminders.');
   if(!PUBLIC_VAPID_KEY)throw new ReminderError('Background reminders aren’t configured on this installation.');
-  if(!('serviceWorker' in navigator)||!('PushManager' in window))throw new ReminderError('Install Folio on your Home Screen to enable push on iPhone.');
+  if(!('serviceWorker' in navigator)||!('PushManager' in window))throw new ReminderError('Install Daystack on your Home Screen to enable push on iPhone.');
   const permission=await Notification.requestPermission();if(permission!=='granted')throw new ReminderError('Allow notifications in browser settings to receive reminders.');
   const registration=await navigator.serviceWorker.ready;
   const key=Uint8Array.from(atob(PUBLIC_VAPID_KEY.replace(/-/g,'+').replace(/_/g,'/')),char=>char.charCodeAt(0));
@@ -37,8 +37,8 @@ export async function checkReminders(data:Data):Promise<void> {
     const key=`folio-reminder:${item.key}:${item.time}:${item.task.reminder}`;
     if(now<due||now-due>60000||localStorage.getItem(key))continue;
     const registration=await navigator.serviceWorker?.getRegistration();
-    if(registration)await registration.showNotification('Folio reminder',{body:item.title,tag:key,icon:'/icons/icon-192.png',data:{url:`/?date=${item.date}`}});
-    else new Notification('Folio reminder',{body:item.title,tag:key,icon:'/icons/icon-192.png'});
+    if(registration)await registration.showNotification('Daystack reminder',{body:item.title,tag:key,icon:'/icons/icon-192.png',data:{url:`/?date=${item.date}`}});
+    else new Notification('Daystack reminder',{body:item.title,tag:key,icon:'/icons/icon-192.png'});
     localStorage.setItem(key,String(now));
   }
 }

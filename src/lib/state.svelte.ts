@@ -19,7 +19,7 @@ export function commit(data:Data,replace=false):void {
   const snapshot=$state.snapshot(data);
   const journal=JSON.stringify(snapshot);
   try { localStorage.setItem(journalKey,journal); }
-  catch(error){if(error instanceof Error)app.error='Device storage is full. Export a backup before closing Folio.';else throw error;}
+  catch(error){if(error instanceof Error)app.error='Device storage is full. Export a backup before closing Daystack.';else throw error;}
   saveChain=saveChain.then(async()=>{
     try {
       const durable=await persistData(snapshot,replace);
