@@ -1,18 +1,17 @@
-# Folio icon provenance
+# Daystack icon provenance
 
-- Artwork: original vector geometry authored for Folio in `scripts/generate-icons.ts`.
-  Seven offset ceramic sheets (front sheet lifted, six receding sheets) with an embossed orange check.
-- No text, logos, fonts, traced images, stock assets, or AI-generated imagery. No Weekstack or other third-party assets.
-- Palette derived from DESIGN.md: ink background, neutral sheet tones, orange #e94d20 completion accent.
-- Rasterized locally with sharp 0.35.5 (librsvg 2.63.2); smaller sizes are Lanczos downsamples of the 1024 render.
-- Regenerate: `bun scripts/generate-icons.ts` (overwrites every file listed below).
+- Artwork: original vector geometry authored in `scripts/generate-icons.ts`: an orange check tile with a ghost outline tile behind it, matching `static/og.png`.
+- No logos, fonts, traced images, stock assets, or AI-generated imagery.
+- Palette from DESIGN.md: paper cream, orange completion accent.
+- Rasterized locally with sharp (librsvg). Regenerate with `bun scripts/generate-icons.ts` (overwrites every file below plus `static/favicon.svg` and `static/favicon.ico`).
+- `static/og.png` (1200x630) is the light "Done today. Fresh tomorrow." share image, set in Instrument Serif and Instrument Sans.
 
 | File | Size | Purpose |
 |---|---|---|
 | icon-master.svg | vector, 1024 canvas | source of truth |
 | icon-1024.png | 1024x1024 | master raster, opaque full-bleed |
-| icon-512.png | 512x512 | manifest `any`, rounded tile |
-| icon-192.png | 192x192 | manifest `any`, rounded tile |
+| icon-512.png, icon-192.png | 512, 192 | manifest `any`, rounded tile |
 | apple-touch-icon.png | 180x180 | iOS home screen, opaque full-bleed |
-| icon-maskable-512.png | 512x512 | manifest `maskable`, artwork within 80% safe zone |
-| ../favicon.svg | vector, 64 grid | browser tab, tuned for 16-32px |
+| icon-maskable-512.png | 512x512 | manifest `maskable`, artwork within the safe zone |
+| favicon-16.png, favicon-32.png | 16, 32 | raster tab icons |
+| ../favicon.svg, ../favicon.ico | vector / 16-48 | browser tab, flat tile tuned for small sizes |

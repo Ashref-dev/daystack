@@ -1,19 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-	<title>Folio</title>
-	<defs>
-		<linearGradient id="b" x1="0" y1="0" x2="0.35" y2="1"><stop offset="0" stop-color="#34352f"/><stop offset="1" stop-color="#161714"/></linearGradient>
-		<linearGradient id="f" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fdfcfa"/><stop offset="1" stop-color="#ecebe5"/></linearGradient>
-		<linearGradient id="o" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff8a5c"/><stop offset="1" stop-color="#c23b13"/></linearGradient>
-	</defs>
-	<rect width="64" height="64" rx="14" fill="url(#b)"/>
-	<rect x="16.6" y="11.0" width="30.8" height="26" rx="4.5" fill="#9d9c93" stroke="#1b1c19" stroke-opacity="0.35" stroke-width="0.6"/>
-	<rect x="15.0" y="14.0" width="34.0" height="26" rx="4.5" fill="#adaca3" stroke="#1b1c19" stroke-opacity="0.35" stroke-width="0.6"/>
-	<rect x="13.4" y="17.0" width="37.2" height="26" rx="4.5" fill="#bdbcb4" stroke="#1b1c19" stroke-opacity="0.35" stroke-width="0.6"/>
-	<rect x="11.8" y="20.0" width="40.4" height="26" rx="4.5" fill="#cdccc5" stroke="#1b1c19" stroke-opacity="0.35" stroke-width="0.6"/>
-	<rect x="10.2" y="23.0" width="43.6" height="26" rx="4.5" fill="#dddcd6" stroke="#1b1c19" stroke-opacity="0.35" stroke-width="0.6"/>
-	<rect x="8.6" y="26.0" width="46.8" height="26" rx="4.5" fill="#ecebe6" stroke="#1b1c19" stroke-opacity="0.35" stroke-width="0.6"/>
-	<rect x="7" y="30" width="50" height="27" rx="5.5" fill="#bdbbb2"/>
-	<rect x="7" y="29" width="50" height="27" rx="5.5" fill="url(#f)" stroke="#1b1c19" stroke-opacity="0.35" stroke-width="0.6"/>
-	<path d="M20.5 42 L28.5 49.5 L43.5 35" fill="none" stroke="#9e2f0e" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" transform="translate(0 1)"/>
-	<path d="M20.5 42 L28.5 49.5 L43.5 35" fill="none" stroke="url(#o)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  <title>Daystack</title>
+  <defs><linearGradient id="o" x1="0" y1="0" x2="0.4" y2="1"><stop offset="0" stop-color="#f4603a"/><stop offset="1" stop-color="#de4318"/></linearGradient></defs>
+  <rect x="2" y="3.5" width="60" height="60" rx="16" fill="#b8360f"/>
+  <rect x="2" y="1.5" width="60" height="60" rx="16" fill="url(#o)"/>
+  <path d="m5 12 4 4L19 6" transform="translate(32 31.5) scale(1.9) translate(-12 -12)" fill="none" stroke="#fff" stroke-width="2.9" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
