@@ -1,4 +1,4 @@
-# Folio design system
+# Daystack design system
 ## 0. Research Log
 User PRD is the visual authority: tactile stacked weekday sheets, orange completion. Type revised to Instrument Serif (display) + Instrument Sans (UI) after the user asked for modern, elegant, less overused faces. Distill pass (user brief): the stack is the whole interface. No header, footer, hero, flavor copy, settings page or theme switcher. Wheel pickers adapt the geometry and inertia of @ncdai/react-wheel-picker (MIT) to Svelte.
 ## 1. Direction

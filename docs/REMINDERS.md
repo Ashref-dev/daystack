@@ -1,6 +1,6 @@
 # Background reminders
 
-Folio can send encrypted Web Push from its server while the app is closed. This is
+Daystack can send encrypted Web Push from its server while the app is closed. This is
 optional infrastructure, **not** an in-browser timer and **not** an automatic
 scheduler. No credentials, database migration, or deployed scheduler are included.
 Local-only users cannot receive server reminders: delivery reads their latest
@@ -97,7 +97,7 @@ reviewed allowlist update. Never add a wildcard or arbitrary user-configured URL
 The service worker must handle a JSON push payload:
 
 ```json
-{ "title": "Folio reminder", "body": "Task title", "tag": "<receipt hash>", "url": "/?date=2026-10-04" }
+{ "title": "Daystack reminder", "body": "Task title", "tag": "<receipt hash>", "url": "/?date=2026-10-04" }
 ```
 
 Call `event.waitUntil(registration.showNotification(...))` on push; use `tag` for

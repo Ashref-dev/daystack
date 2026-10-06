@@ -1,6 +1,6 @@
-# Folio
+# Daystack
 
-Build your ideal repeating routine once — skincare every day, gym five days a week, medication on Sundays — then open the app, land on today and check things off. Repeats come back fresh the next day. Mobile-first and local-first, built with Svelte 5, SvelteKit 3 and Bun. Repository: **daystack**; app name: **Folio**.
+Build your ideal repeating routine once — skincare every day, gym five days a week, medication on Sundays — then open the app, land on today and check things off. Repeats come back fresh the next day. Mobile-first and local-first, built with Svelte 5, SvelteKit 3 and Bun. The app is called **Daystack**.
 
 ## Run
 
